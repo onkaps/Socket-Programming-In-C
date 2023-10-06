@@ -18,6 +18,7 @@ typedef struct sockaddr_in Address;
 void Check ( int condition, char* message) {
     if(condition){
         printf("\n%s\n", message);
+        exit(EXIT_FAILURE);
     }
     
 }

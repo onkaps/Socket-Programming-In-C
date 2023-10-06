@@ -1,4 +1,6 @@
+#define SUPPRESS_SOCKET_LOGS 1
 #include "socket.h"
+
 
 #define PORT 8080
 
@@ -26,18 +28,35 @@ int main () {
 
     while (1)
     {
-        FILE *fp;
-        char *filename = "share.txt";
-        fp = fopen(filename, "r");
-        if( !fp){
-            perror("\nError in Reading File.\n");
+        // FILE *fp;
+        // char *filename = "share.txt";
+        // fp = fopen(filename, "r");
+        // if( !fp){
+        //     perror("\nError in Reading File.\n");
+        //     exit(EXIT_FAILURE);
+        // }
+        // Send_File(fp, client_fd);
+        // printf("\nFile sent...!\n");
+
+        // close(client_fd);
+        // exit(EXIT_SUCCESS);
+        FILE* image_file = fopen("share_image.jpg", "rb");
+        if( image_file == NULL){
+            perror("\nError in Reading image file\n");
             exit(EXIT_FAILURE);
         }
-        Send_File(fp, client_fd);
-        printf("\nFile sent...!\n");
 
+        char buffer[1024];
+        int byte_read ;
+        while (byte_read = fread(buffer, 1, sizeof(buffer), image_file) > 0)
+        {
+            send(client_fd, buffer, byte_read, 0);
+        }
+        fclose(image_file);
         close(client_fd);
-        exit(EXIT_SUCCESS);
+        printf("\n!--Image sent successfully--!\n");
+        
+    exit(EXIT_SUCCESS);
     }
     return 0;
 }

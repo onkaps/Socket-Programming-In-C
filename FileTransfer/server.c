@@ -1,5 +1,5 @@
+#define SUPPRESS_SOCKET_LOGS 1
 #include "socket.h"
-
 #define PORT 8080
 
 
@@ -23,28 +23,6 @@ void Write_File ( int sock_fd ) {
     return;    
 }
 
-int Send_Image ( int sock_fd ) {
-    FILE *picture;
-    int size, read_size;
-    char send_buffer[10240], verify;
-
-    picture = fopen("image.png", "r");
-    if(picture == NULL) {
-        perror("\nError in picture opening.\n");
-    }
-
-    fseek(picture, 0, SEEK_END);
-    size = ftell(picture);
-    fseek( picture, 0, SEEK_SET);
-
-    // Sending Picture size. 
-    printf("\nSending Image size to client..\n");
-    write(sock_fd, send_buffer, size);
-
-
-    // if( read_size = read(sock_fd, send_buffer, size) == )
-
-}
 
 int main () {
     int server_fd = Create_socket(AF_INET, SOCK_STREAM, PROTOCOL);
@@ -56,10 +34,28 @@ int main () {
 
     while (1)
     {
-        Write_File(client_fd);
+        // Write_File(client_fd);
+        // exit(EXIT_SUCCESS);
 
+        FILE* image_file = fopen("recv_image.jpg", "wb");
+        if( image_file == NULL){
+            perror("\nError in Opening image file in binaey write mode.\n");
+            exit(EXIT_FAILURE);
+        }
+        char buffer[1024];
+        int byte_recv;
+        while (byte_recv = recv(client_fd, buffer, sizeof(buffer), 0) > 0)
+        {
+            fwrite(buffer, 1, byte_recv, image_file);
+        }
+
+        fclose(image_file);
+        close(client_fd);
+        printf("\nFile recevied \n");
         exit(EXIT_SUCCESS);
+        
     }
+    
         
     return 0;
 }
