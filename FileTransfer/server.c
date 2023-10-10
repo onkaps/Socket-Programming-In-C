@@ -24,8 +24,8 @@ void Write_File ( int sock_fd ) {
 }
 
 void Text_file_transfer ( int sock_fd )  {
-        Write_File(sock_fd );
-        exit(EXIT_SUCCESS);
+    Write_File(sock_fd );
+    exit(EXIT_SUCCESS);
 }
 
 void Image_file_transfer ( int sock_fd ) {
@@ -43,8 +43,26 @@ void Image_file_transfer ( int sock_fd ) {
     }
     fclose(picture);
     close(sock_fd);
-    
 }
+
+void Video_file_transfer ( int sock_fd ) {
+    FILE* video = fopen("received_video.mp4", "wb");
+    if(!video){
+        perror("\nError in opening Video file in Binary write <'wb'> mode.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char video_buffer[1024 * 1024];
+    size_t byte_written;
+    while ((byte_written = recv(sock_fd, video_buffer, sizeof(video_buffer), 0)) > 0)
+    {
+        fwrite(video_buffer, 1, byte_written, video);
+    }
+    fclose(video);
+    close(sock_fd);
+}
+
+
 
 int main () {
     int server_fd = Create_socket(AF_INET, SOCK_STREAM, PROTOCOL);
@@ -55,9 +73,10 @@ int main () {
     int client_fd = Accept_connection(server_fd, server_address);
 
     // Text_file_transfer(client_fd);
-    Image_file_transfer(client_fd);
+    // Image_file_transfer(client_fd);
+    Video_file_transfer(client_fd);
+
+
     close(server_fd);
-
-
     return 0;
 }

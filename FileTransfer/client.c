@@ -29,13 +29,12 @@ void Text_file_transfer ( int sock_fd , char* file_send ) {
     printf("\nFile sent...!\n");
 
     close(sock_fd);
-    exit(EXIT_SUCCESS);
 }
 
 void Image_file_transfer ( int sock_fd , char* file_send){
     FILE* picture = fopen(file_send, "rb");
     if( !picture){
-        perror("\nError in opening Image file in Binary read <'rb'>mode.\n");
+        perror("\nError in opening Image file in Binary read <'rb'> mode.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -50,11 +49,29 @@ void Image_file_transfer ( int sock_fd , char* file_send){
     }
     fclose(picture);
     close(sock_fd);
-    exit(EXIT_SUCCESS);
     
 }
 
+void Video_file_transfer ( int sock_fd, char* file_send ) {
+    FILE* video = fopen(file_send, "rb");
+    if(!video){
+        perror("\nError in opening Video file in Binary read <'rb'> mode.\n");
+        exit(EXIT_FAILURE);
+    }
+    char video_buffer[1024 * 1024];
+    size_t byte_read;
+    while ((byte_read = fread(video_buffer, 1, sizeof(video_buffer), video)) > 0)
+    {
+        if( send( sock_fd, video_buffer, byte_read, 0) < 0){
+            perror("\nError in sending byte_read.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    fclose(video);
+    close(sock_fd);
+    
 
+}
 
 int main ( int argc, char *argv[] ) {
     int client_fd = Create_socket(AF_INET, SOCK_STREAM, PROTOCOL);
@@ -69,14 +86,9 @@ int main ( int argc, char *argv[] ) {
     }
 
     // Text_file_transfer( client_fd, argv[1]);
+    // Image_file_transfer(client_fd, argv[1]);
+    Video_file_transfer(client_fd, argv[1]);
 
-    Image_file_transfer(client_fd, argv[1]);
 
-
-   
-    
-
-  
-    
     return 0;
 }
