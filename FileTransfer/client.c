@@ -20,16 +20,38 @@ void Send_File(FILE *fp, int sock_fd) {
 
 
 void Text_file_transfer ( int sock_fd , char* file_send ) {
-        FILE* fp = fopen(file_send, "r"); 
-        if( !fp){
-            perror("\nError in Reading File.\n");
+    FILE* fp = fopen(file_send, "r"); 
+    if( !fp){
+        perror("\nError in opening Text file in Read <'r'>mode.\n");
+        exit(EXIT_FAILURE);
+    }
+    Send_File(fp, sock_fd);
+    printf("\nFile sent...!\n");
+
+    close(sock_fd);
+    exit(EXIT_SUCCESS);
+}
+
+void Image_file_transfer ( int sock_fd , char* file_send){
+    FILE* picture = fopen(file_send, "rb");
+    if( !picture){
+        perror("\nError in opening Image file in Binary read <'rb'>mode.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char image_buffer[1024 * 1024];
+    size_t byte_read;
+    while ((byte_read = fread( image_buffer, 1, sizeof(image_buffer), picture)) > 0)
+    {
+        if( send(sock_fd, image_buffer, byte_read, 0) < 0) { 
+            perror("\nError in sending byte_read.\n");
             exit(EXIT_FAILURE);
         }
-        Send_File(fp, sock_fd);
-        printf("\nFile sent...!\n");
-
-        close(sock_fd);
-        exit(EXIT_SUCCESS);
+    }
+    fclose(picture);
+    close(sock_fd);
+    exit(EXIT_SUCCESS);
+    
 }
 
 
@@ -46,9 +68,11 @@ int main ( int argc, char *argv[] ) {
         exit(EXIT_FAILURE);
     }
 
+    // Text_file_transfer( client_fd, argv[1]);
+
+    Image_file_transfer(client_fd, argv[1]);
 
 
-    Text_file_transfer( client_fd, argv[1]);
    
     
 
