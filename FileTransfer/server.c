@@ -6,10 +6,9 @@
 void Write_File ( int sock_fd ) {
     int n;
     FILE *fp;
-    char *filename = "recv.txt";
     char buffer[SIZE];
 
-    fp = fopen(filename, "w");
+    fp = fopen("received_text.txt", "w");
     while (1)
     {
         n = recv(sock_fd, buffer, SIZE * sizeof(char), 0);
@@ -18,11 +17,16 @@ void Write_File ( int sock_fd ) {
             return;
         }
         fprintf(fp, "%s", buffer);
+        fflush(stdout);
         bzero(buffer, SIZE);
     }
     return;    
 }
 
+void Text_file_transfer ( int sock_fd )  {
+        Write_File(sock_fd );
+        exit(EXIT_SUCCESS);
+}
 
 int main () {
     int server_fd = Create_socket(AF_INET, SOCK_STREAM, PROTOCOL);
@@ -32,30 +36,8 @@ int main () {
     listen_socket(server_fd, 5);
     int client_fd = Accept_connection(server_fd, server_address);
 
-    while (1)
-    {
-        // Write_File(client_fd);
-        // exit(EXIT_SUCCESS);
+    Text_file_transfer(client_fd);
 
-        FILE* image_file = fopen("recv_image.jpg", "wb");
-        if( image_file == NULL){
-            perror("\nError in Opening image file in binaey write mode.\n");
-            exit(EXIT_FAILURE);
-        }
-        char buffer[1024];
-        int byte_recv;
-        while (byte_recv = recv(client_fd, buffer, sizeof(buffer), 0) > 0)
-        {
-            fwrite(buffer, 1, byte_recv, image_file);
-        }
 
-        fclose(image_file);
-        close(client_fd);
-        printf("\nFile recevied \n");
-        exit(EXIT_SUCCESS);
-        
-    }
-    
-        
     return 0;
 }
