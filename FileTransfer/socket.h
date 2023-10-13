@@ -9,6 +9,7 @@
 #include<netinet/in.h>
 #include<strings.h>
 #include<errno.h>
+
 #define SIZE 1024
 
 
@@ -19,9 +20,7 @@ typedef struct sockaddr_in Address;
 void Check ( int condition, char* message) {
     if(condition){
         printf("\n%s\n", message);
-        exit(EXIT_FAILURE);
     }
-    
 }
 
 int Create_socket(int family, int type, int protocol){
@@ -87,4 +86,33 @@ void connect_to_address (int socket_fd, Address* addr) {
 	#ifndef SUPPRESS_SOCKET_LOGS 
 	printf("\nConnection established.\n");
 	#endif
+}
+
+void send_on_socket ( int socket_fd, char *message ) {
+    int status;
+    char buffer[SIZE];
+    strcpy(buffer, message);
+    status = send(socket_fd, buffer, sizeof(buffer), 0);
+    Check(status < 0, "[+]Error in sending message.");
+	#ifndef SUPPRESS_SOCKET_LOGS 
+	printf("\nMessage sent.\n");
+	#endif
+}
+
+char* receive_from_socket ( int socket_fd ) {
+    char* buffer = (char *)malloc(sizeof(char) * SIZE );
+    size_t length = SIZE;
+    int bytes_recv; 
+    while ( (bytes_recv = recv(socket_fd, buffer, length, 0 )) != 0 )
+    {
+        if(bytes_recv < 0){
+            printf("Error in reciving.");
+            exit(EXIT_FAILURE);
+        }
+        buffer += bytes_recv;
+        length -= bytes_recv;
+        if(length == 0) break;
+    }
+    Check( bytes_recv == 0, "Connection closed befor data to be recevied.");
+    
 }
