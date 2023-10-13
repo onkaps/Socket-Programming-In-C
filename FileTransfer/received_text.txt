@@ -1,5 +1,0 @@
-hi 
-myself Onkar Nagnath Kapuskari 
-Our Course Project for 'Computer Network' is File Transfer using socket Programming In c.
-Thank you.
-
