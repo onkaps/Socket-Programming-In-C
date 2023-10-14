@@ -56,7 +56,6 @@ int main () {
 
     int event;
     recv(client_fd, &event, sizeof(event) , 0); 
-    printf("Check event no. : %d ", event);
 
     // Text_file_transfer(client_fd);
     // Image_file_transfer(client_fd);
