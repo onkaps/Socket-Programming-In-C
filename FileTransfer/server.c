@@ -86,6 +86,7 @@ int main () {
         break;
         
     default:
+        printf("\nError in transfer file\n");
         break;
     }
 
