@@ -1,12 +1,13 @@
 #include "socket.h"
 #define PORT 8080
 
-void Write_File ( int socket_fd ) {
+//To wirte the (text files only) file contains received from client line by line to the new file.
+void Write_File ( int socket_fd, char *filePath) {
     int n;
     FILE *fp;
     char buffer[SIZE];
 
-    fp = fopen("./receive/received_text.txt", "w");
+    fp = fopen(filePath, "w");
     while (1)
     {
         n = recv(socket_fd, buffer, SIZE * sizeof(char), 0);
@@ -21,11 +22,7 @@ void Write_File ( int socket_fd ) {
     return;    
 }
 
-void Text_file_receive ( int socket_fd )  {
-    Write_File(socket_fd );
-}
-
-
+// write contains byte wise to the new file by opening th file in binary write mode
 void file_receive ( int socket_fd,char *filePath ) {
     FILE* file = fopen(filePath, "wb");
     if(!file){
@@ -56,31 +53,24 @@ int main () {
 
     int event;
     recv(client_fd, &event, sizeof(event) , 0); 
-
-    // Text_file_transfer(client_fd);
-    // Image_file_transfer(client_fd);
-    // Video_file_transfer(client_fd);
     switch (event)
     {
     case 1:
-        Text_file_receive(client_fd);
+        Write_File(client_fd, "./receive/received_text.txt");
         printf("\nText File received successfully.\n");
         break;
 
     case 2:
-        // Image_file_transfer(client_fd);
         file_receive(client_fd, "./receive/received_image.jpg");
         printf("\nImage File received successfully.\n");
         break;
     
     case 3:
-        // Video_file_transfer(client_fd);
         file_receive(client_fd, "./receive/received_video.mp4");
         printf("\nVideo File received successfully.\n");
         break;
 
     case 4:
-        // PDF_file_transfer(client_fd);
         file_receive(client_fd, "./receive/received_PDF.pdf");
         printf("\nPDF File received successfully.\n");
         break;
@@ -89,9 +79,6 @@ int main () {
         printf("\nError in transfer file\n");
         break;
     }
-
-
-
 
     close(server_fd);
     return 0;

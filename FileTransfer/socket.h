@@ -8,7 +8,6 @@
 #include<sys/types.h>
 #include<netinet/in.h>
 #include<strings.h>
-#include<errno.h>
 
 #define SIZE 1024
 

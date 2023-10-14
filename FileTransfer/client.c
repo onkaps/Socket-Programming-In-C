@@ -1,7 +1,10 @@
 #include "socket.h"
 #define PORT 8080
 
+// To store size of file 
 size_t file_size;
+
+//This function generate the actual path of a file which is to be sent.By concatinating current directery + folderName + filename
 char* generate_filePath(char *folder, char *fileName ){
     char *filePath = (char *)malloc( (strlen(folder) + strlen(fileName)) * sizeof(char));
     strcat(folder, fileName);
@@ -9,6 +12,7 @@ char* generate_filePath(char *folder, char *fileName ){
     return filePath;
 }
 
+//Sends the text file by reading file contains line by line.
 void Send_File(FILE *fp, int socket_fd) {
     int n ;
     char buffer[SIZE] = {0};
@@ -23,7 +27,7 @@ void Send_File(FILE *fp, int socket_fd) {
     }
 }
 
-
+//opening the text file in read mode.
 void Text_file_transfer ( int socket_fd, char *filePath ) {
     FILE* fp = fopen(filePath, "r"); 
     if( !fp){
@@ -35,16 +39,17 @@ void Text_file_transfer ( int socket_fd, char *filePath ) {
     close(socket_fd);
 }
 
-
-
-
+//This function transfer the file which require to open file in binary read mode.
 void File_transfer ( int socket_fd, char *filePath) {
     FILE* file = fopen(filePath, "rb");
     if(!file){
         perror("\nError in opening  file in Binary read <'rb'> mode.\n");
         exit(EXIT_FAILURE);
     }
+    //To store data byte
     char file_buffer[SIZE * SIZE];
+
+    //read data byte
     size_t byte_read;
     while ((byte_read = fread(file_buffer, 1, sizeof(file_buffer), file)) > 0)
     {
@@ -83,10 +88,7 @@ int main () {
     scanf("%d", &event);
     filePath = generate_filePath(folder, fileName);
     printf("\nfile name received check : %s\n", filePath); 
-    // printf("\nfile path check : %s", filePath);
-    // Text_file_transfer( client_fd, argv[1]);
-    // Image_file_transfer(client_fd, argv[1]);
-    // Video_file_transfer(client_fd, argv[1]);
+
     switch (event)
     {
     case 1:
@@ -98,7 +100,6 @@ int main () {
     
     case 2:
         send(client_fd, &event, sizeof(event), 0);
-        // Image_file_transfer(client_fd);
         File_transfer(client_fd, filePath);
         printf("\nImage File sent...!\n");
         printf("\nFile size = %ld bytes\n", file_size);
@@ -106,7 +107,6 @@ int main () {
     
     case 3:
         send(client_fd, &event, sizeof(event), 0);
-        // Video_file_transfer(client_fd);
         File_transfer(client_fd, filePath);
         printf("\nVideo File sent...!\n");
         printf("\nFile size = %ld bytes\n", file_size);
@@ -114,7 +114,6 @@ int main () {
     
     case 4:
         send(client_fd, &event, sizeof(event), 0);
-        // PDF_file_transfer(client_fd);
         File_transfer(client_fd, filePath);
         printf("\nPDF File sent...!\n");
         printf("\nFile size = %ld bytes\n", file_size);
