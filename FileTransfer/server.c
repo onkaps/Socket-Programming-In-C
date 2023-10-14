@@ -64,7 +64,7 @@ int main () {
     switch (event)
     {
     case 1:
-        Text_file_transfer(client_fd);
+        Text_file_receive(client_fd);
         printf("\nText File received successfully.\n");
         break;
 
