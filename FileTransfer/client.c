@@ -1,14 +1,12 @@
 #include "socket.h"
-
-
 #define PORT 8080
 
+size_t file_size;
 char* generate_filePath(char *folder, char *fileName ){
     char *filePath = (char *)malloc( (strlen(folder) + strlen(fileName)) * sizeof(char));
     strcat(folder, fileName);
     strcpy(filePath, folder);
     return filePath;
-
 }
 
 void Send_File(FILE *fp, int socket_fd) {
@@ -20,6 +18,7 @@ void Send_File(FILE *fp, int socket_fd) {
             perror("Error in sending file");
             exit(EXIT_FAILURE);
         }
+        file_size = file_size + strlen(buffer) * sizeof(char);
         bzero(buffer, SIZE);
     }
 }
@@ -53,6 +52,7 @@ void File_transfer ( int socket_fd, char *filePath) {
             perror("\nError in sending byte_read.\n");
             exit(EXIT_FAILURE);
         }
+        file_size = file_size + byte_read;
     }
     fclose(file);
     close(socket_fd);
@@ -93,6 +93,7 @@ int main () {
         send(client_fd, &event, sizeof(event), 0);
         Text_file_transfer(client_fd, filePath);
         printf("\nText File sent...!\n");
+        printf("\nFile size = %ld bytes\n", file_size);
         break;
     
     case 2:
@@ -100,6 +101,7 @@ int main () {
         // Image_file_transfer(client_fd);
         File_transfer(client_fd, filePath);
         printf("\nImage File sent...!\n");
+        printf("\nFile size = %ld bytes\n", file_size);
         break;
     
     case 3:
@@ -107,6 +109,7 @@ int main () {
         // Video_file_transfer(client_fd);
         File_transfer(client_fd, filePath);
         printf("\nVideo File sent...!\n");
+        printf("\nFile size = %ld bytes\n", file_size);
         break;
     
     case 4:
@@ -114,6 +117,7 @@ int main () {
         // PDF_file_transfer(client_fd);
         File_transfer(client_fd, filePath);
         printf("\nPDF File sent...!\n");
+        printf("\nFile size = %ld bytes\n", file_size);
         break;
     
     case 0:

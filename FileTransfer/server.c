@@ -21,9 +21,8 @@ void Write_File ( int socket_fd ) {
     return;    
 }
 
-void Text_file_transfer ( int socket_fd )  {
+void Text_file_receive ( int socket_fd )  {
     Write_File(socket_fd );
-    exit(EXIT_SUCCESS);
 }
 
 
