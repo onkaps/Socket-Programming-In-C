@@ -35,7 +35,6 @@ void Text_file_transfer ( int socket_fd, char *filePath ) {
         exit(EXIT_FAILURE);
     }
     Send_File(fp, socket_fd);
-    printf("\ncheck..!\n");
     close(socket_fd);
 }
 
@@ -87,7 +86,7 @@ int main () {
     printf("\nEnter option : ");
     scanf("%d", &event);
     filePath = generate_filePath(folder, fileName);
-    printf("\nfile name received check : %s\n", filePath); 
+    printf("\nfile Path : %s\n", filePath); 
 
     switch (event)
     {
